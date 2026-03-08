@@ -1,0 +1,15 @@
+[project]
+name = "speach"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.10.8",
+    "ptflops>=0.7.5",
+    "pytorch-lightning>=2.6.1",
+    "torch>=2.10.0",
+    "torchaudio>=2.10.0",
+    "torchcodec>=0.10.0",
+    "torchmetrics>=1.8.2",
+]
