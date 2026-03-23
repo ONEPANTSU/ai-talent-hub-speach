@@ -1,0 +1,5 @@
+dataset,lm,method,wer,cer,num_samples
+librispeech_test_other,librispeech_3gram,beam_lm,0.10999755560987534,0.037498183227556804,200
+librispeech_test_other,librispeech_3gram,beam_lm_rescore,0.10999755560987534,0.03740128869725304,200
+earnings22_test,librispeech_3gram,beam_lm,0.5533132530120481,0.2540008650519031,200
+earnings22_test,librispeech_3gram,beam_lm_rescore,0.5533132530120481,0.25362240484429066,200

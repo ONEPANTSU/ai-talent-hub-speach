@@ -1,0 +1,9 @@
+dataset,lm,method,wer,cer,num_samples
+librispeech_test_other,librispeech_3gram,beam_lm,0.10999755560987534,0.037498183227556804,200
+librispeech_test_other,librispeech_3gram,beam_lm_rescore,0.10999755560987534,0.037546630492708684,200
+earnings22_test,librispeech_3gram,beam_lm,0.5533132530120481,0.2540008650519031,200
+earnings22_test,librispeech_3gram,beam_lm_rescore,0.55,0.2539467993079585,200
+librispeech_test_other,financial_3gram,beam_lm,0.10926423857247616,0.037546630492708684,200
+librispeech_test_other,financial_3gram,beam_lm_rescore,0.1107308726472745,0.03783731408361998,200
+earnings22_test,financial_3gram,beam_lm,0.5256024096385542,0.25032439446366783,200
+earnings22_test,financial_3gram,beam_lm_rescore,0.5394578313253012,0.2523248269896194,200
