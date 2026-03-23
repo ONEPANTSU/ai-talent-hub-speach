@@ -13,7 +13,6 @@ __pycache__/
 data/
 logs/
 
-# Assignment 2 — слишком большие / лишние для git (см. assignment_2/README.md)
 assignment_2/lm/4-gram.arpa.gz
 assignment_2/results_smoke/
 assignment_2/results_smoke2/
