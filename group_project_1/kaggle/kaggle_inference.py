@@ -10,7 +10,8 @@ except ImportError:
 try:
     from pyctcdecode import build_ctcdecoder
 except ImportError:
-    subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "pyctcdecode"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet",
+                           "--no-deps", "pyctcdecode", "pygtrie"])
     from pyctcdecode import build_ctcdecoder
 
 INPUT_ROOT = Path("/kaggle/input")
