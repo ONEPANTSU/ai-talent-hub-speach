@@ -15,23 +15,32 @@ subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet",
 subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet",
                        "https://github.com/kpu/kenlm/archive/master.zip"])
 
-COMP_NAMES = [
-    "asr-2026-spoken-numbers-recognition-challenge",
-]
-COMP_INPUT = None
-for name in COMP_NAMES:
-    p = Path(f"/kaggle/input/{name}")
-    if p.exists():
-        COMP_INPUT = str(p)
-        break
-assert COMP_INPUT, "Данные соревнования не подключены. Add Input > Competition."
+INPUT_ROOT = Path("/kaggle/input")
+print("Ищу train.csv и dev.csv в /kaggle/input ...")
+
+TRAIN_CSV = None
+DEV_CSV = None
+for p in INPUT_ROOT.rglob("train.csv"):
+    TRAIN_CSV = p
+    break
+for p in INPUT_ROOT.rglob("dev.csv"):
+    DEV_CSV = p
+    break
+
+assert TRAIN_CSV is not None, "train.csv не найден"
+assert DEV_CSV is not None, "dev.csv не найден"
+
+COMP_INPUT = str(TRAIN_CSV.parent)
+print("TRAIN_CSV: ", TRAIN_CSV)
+print("DEV_CSV:   ", DEV_CSV)
 print("COMP_INPUT:", COMP_INPUT)
 
-TRAIN_CSV = next(Path(COMP_INPUT).rglob("train.csv"), None)
-DEV_CSV = next(Path(COMP_INPUT).rglob("dev.csv"), None)
-assert TRAIN_CSV and DEV_CSV, f"train.csv/dev.csv не найдены в {COMP_INPUT}"
-print("TRAIN_CSV:", TRAIN_CSV)
-print("DEV_CSV:", DEV_CSV)
+import pandas as pd
+df = pd.read_csv(TRAIN_CSV)
+print("train rows:", len(df))
+print(df.head(2))
+first_audio = Path(COMP_INPUT) / df.iloc[0]["filename"]
+print("first audio exists:", first_audio.exists(), "->", first_audio)
 
 OUT_DIR = "/kaggle/working/ckpt"
 LM_DIR = "/kaggle/working/lm"
@@ -42,7 +51,7 @@ print("\n=== training KenLM ===")
 CORPUS = f"{LM_DIR}/corpus.txt"
 LM_ARPA = f"{LM_DIR}/numbers_3gram.arpa"
 subprocess.check_call([sys.executable, "scripts/make_lm_corpus.py", "--out", CORPUS])
-subprocess.check_call([sys.executable, "scripts/train_kenlm.py",
+subprocess.check_call([sys.executable, "scripts/make_arpa.py",
                        "--corpus", CORPUS, "--out", LM_ARPA, "--order", "3"])
 
 print("\n=== training acoustic model ===")
