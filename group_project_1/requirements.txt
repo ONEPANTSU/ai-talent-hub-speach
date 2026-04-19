@@ -1,0 +1,11 @@
+# базовое
+torch>=2.0
+torchaudio>=2.0
+numpy
+pandas
+# для удобного чтения mp3 на Kaggle (torchaudio иногда капризничает)
+soundfile
+librosa
+
+# инференс-декодер (KenLM — отдельно, из исходников, см. README)
+# pip install https://github.com/kpu/kenlm/archive/master.zip
