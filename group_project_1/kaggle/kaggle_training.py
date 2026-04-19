@@ -1,13 +1,14 @@
 import os, subprocess, sys
 from pathlib import Path
 
-REPO = "https://github.com/<your-username>/<your-repo>.git"
+REPO = "https://github.com/ONEPANTSU/ai-talent-hub-speach.git"
 REPO_DIR = "/kaggle/working/repo"
+PROJECT_PATH = "/kaggle/working/repo/group_project_1"
 if not Path(REPO_DIR).exists():
     subprocess.check_call(["git", "clone", REPO, REPO_DIR])
 
-os.chdir(REPO_DIR)
-sys.path.insert(0, REPO_DIR)
+os.chdir(PROJECT_PATH)
+sys.path.insert(0, PROJECT_PATH)
 
 subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet",
                        "-r", "requirements.txt"])

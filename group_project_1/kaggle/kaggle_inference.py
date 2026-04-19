@@ -1,7 +1,6 @@
 import subprocess, sys, os
 
 def pip_install_from_dataset(wheel_glob):
-    """Ставим пакет из .whl, лежащего в Kaggle-датасете (интернет не нужен)."""
     import glob
     wheels = glob.glob(wheel_glob)
     if wheels:
@@ -10,7 +9,7 @@ def pip_install_from_dataset(wheel_glob):
 pip_install_from_dataset("/kaggle/input/*/kenlm*.whl")
 
 COMP_INPUT = "/kaggle/input/asr-2026-spoken-numbers-recognition-challenge"  # соревнование
-WEIGHTS_INPUT = "/kaggle/input/asr-numbers-weights"  # твой dataset с best.ckpt, lm, кодом
+WEIGHTS_INPUT = "/kaggle/input/asr-numbers-weights"
 
 sys.path.insert(0, WEIGHTS_INPUT)
 
