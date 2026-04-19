@@ -1,51 +1,57 @@
 import subprocess, sys, os
-
-def pip_install_from_dataset(wheel_glob):
-    import glob
-    wheels = glob.glob(wheel_glob)
-    if wheels:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "--no-deps", wheels[0]])
-
-pip_install_from_dataset("/kaggle/input/*/kenlm*.whl")
-
-COMP_INPUT = "/kaggle/input/asr-2026-spoken-numbers-recognition-challenge"  # соревнование
-WEIGHTS_INPUT = "/kaggle/input/asr-numbers-weights"
-
-sys.path.insert(0, WEIGHTS_INPUT)
-
-import pandas as pd
 from pathlib import Path
 
-cand = list(Path(COMP_INPUT).rglob("sample_submission.csv"))
-assert cand, f"sample_submission.csv не найден в {COMP_INPUT}"
-SAMPLE_SUB = str(cand[0])
-print("sample_submission:", SAMPLE_SUB)
+try:
+    import kenlm
+    print("kenlm already installed")
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "kenlm"])
+    import kenlm
+    print("kenlm installed")
+
+INPUT_ROOT = Path("/kaggle/input")
+
+best_ckpt = next(INPUT_ROOT.rglob("best.ckpt"), None)
+assert best_ckpt is not None, "best.ckpt не найден"
+WEIGHTS_INPUT = str(best_ckpt.parent)
+print("WEIGHTS_INPUT:", WEIGHTS_INPUT)
+
+sample_sub = next(INPUT_ROOT.rglob("sample_submission.csv"), None)
+assert sample_sub is not None, "sample_submission.csv не найден"
+SAMPLE_SUB = str(sample_sub)
+COMP_INPUT = str(sample_sub.parent)
+print("SAMPLE_SUB:", SAMPLE_SUB)
+print("COMP_INPUT:", COMP_INPUT)
+
+sys.path.insert(0, WEIGHTS_INPUT)
+INFER_SCRIPT = str(Path(WEIGHTS_INPUT) / "scripts" / "infer.py")
+assert Path(INFER_SCRIPT).exists(), f"infer.py не найден: {INFER_SCRIPT}"
+
+import pandas as pd
 sub_df = pd.read_csv(SAMPLE_SUB)
 print("columns:", list(sub_df.columns))
-print("head:\n", sub_df.head())
+print(sub_df.head())
+print(f"rows: {len(sub_df)}")
 
-DATA_ROOT = COMP_INPUT
+first_path = Path(COMP_INPUT) / sub_df.iloc[0, 0]
+print(f"first audio: {first_path}  exists: {first_path.exists()}")
 
 CKPT = f"{WEIGHTS_INPUT}/best.ckpt"
 LM = f"{WEIGHTS_INPUT}/numbers_3gram.arpa"
 OUT = "/kaggle/working/submission.csv"
 
-for p in (CKPT,):
-    assert Path(p).exists(), f"Отсутствует: {p}"
 has_lm = Path(LM).exists()
-print("checkpoint:", CKPT)
-print("LM:", LM if has_lm else "<не найден — используем greedy или beam без LM>")
+print("LM:", LM if has_lm else "<no>")
 
 ID_COL = sub_df.columns[0]
-PRED_COL = sub_df.columns[1] if len(sub_df.columns) > 1 else "transcription"
+PRED_COL = sub_df.columns[1]
 print(f"id_col={ID_COL}  pred_col={PRED_COL}")
 
 cmd = [
-    sys.executable,
-    f"{WEIGHTS_INPUT}/scripts/infer.py",
+    sys.executable, INFER_SCRIPT,
     "--ckpt", CKPT,
     "--test_csv", SAMPLE_SUB,
-    "--data_root", DATA_ROOT,
+    "--data_root", COMP_INPUT,
     "--out", OUT,
     "--id_col", ID_COL,
     "--pred_col", PRED_COL,
@@ -58,10 +64,9 @@ cmd = [
 if has_lm:
     cmd += ["--lm", LM]
 
-print("running:", " ".join(cmd))
+print("\nrunning:", " ".join(cmd))
 subprocess.check_call(cmd)
 
 final = pd.read_csv(OUT)
 print(f"\nsubmission rows: {len(final)}")
-print(final.head(10))
-print("\ndone:", OUT)
+print(final.head(20))
