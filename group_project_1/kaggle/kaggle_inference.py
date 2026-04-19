@@ -1,3 +1,12 @@
+import subprocess, sys, os
+from pathlib import Path
+
+try:
+    import kenlm
+except ImportError:
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "--quiet", "kenlm"])
+    import kenlm
+
 try:
     from pyctcdecode import build_ctcdecoder
     print("pyctcdecode already installed")
